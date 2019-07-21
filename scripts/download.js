@@ -103,8 +103,6 @@ const themeNameMap = {
  * @param {Theme} theme
  */
 async function downloadAndSave(category, icon, theme) {
-  console.log(`download icon: ${icon.id}_${theme}`)
-
   const url = buildIconUrl(icon, theme)
   const size = url.match(/^.*-([0-9]+)px.svg$/)[1]
   const { body: svg } = await got(url)
@@ -136,7 +134,10 @@ async function run() {
         return Promise.all(
           category.icons.map(icon => {
             return Promise.all(
-              themes.map(theme => downloadAndSave(category, icon, theme)),
+              themes.map(theme => {
+                console.log(`Downloading: ${theme} ${icon}`)
+                return downloadAndSave(category, icon, theme)
+              }),
             )
           }),
         )

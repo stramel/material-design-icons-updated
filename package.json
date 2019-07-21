@@ -1,24 +1,25 @@
 {
-  "name": "material-design-icons",
-  "version": "3.0.1",
+  "name": "material-design-icons-updated",
+  "version": "4.0",
   "description": "Material Design icons by Google",
-  "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/google/material-design-icons"
+    "url": "https://github.com/stramel/material-design-icons-updated"
   },
+  "files": [
+    "icons"
+  ],
   "keywords": [
     "icons",
     "material",
     "material-design",
     "google"
   ],
-  "author": "Material Design Authors",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/google/material-design-icons/issues"
+    "url": "https://github.com/stramel/material-design-icons-updated/issues"
   },
-  "homepage": "https://github.com/google/material-design-icons",
+  "homepage": "https://github.com/stramel/material-design-icons-updated",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",

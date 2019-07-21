@@ -20,12 +20,22 @@
   },
   "homepage": "https://github.com/google/material-design-icons",
   "devDependencies": {
-    "ky": "^0.11.1"
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "got": "^9.6.0"
+  },
+  "engines": {
+    "node": ">= 12.6.0"
   },
   "prettier": {
     "trailingComma": "all",
     "tabWidth": 2,
     "semi": false,
     "singleQuote": true
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node -r @babel/register ./scripts/download.js"
   }
 }

@@ -1,5 +1,6 @@
-import fs from 'fs'
-import { promisify } from 'utils'
+import * as fs from 'fs'
+import * as util from 'util'
+const { promisify } = util
 
 export const exists = promisify(fs.exists)
 export const mkdir = promisify(fs.mkdir)

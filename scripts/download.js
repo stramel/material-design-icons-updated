@@ -1,23 +1,25 @@
-import ky from 'ky'
+const got = require('got')
 import { resolve, join } from 'path'
-import { ensureDirectory, readFile, writeFile } from './fs'
+import { ensureDirectory, readFile, writeFile } from './fs.js'
 
 // Pull in our current version
-const versionFilePath = resolve(__dirname, './VERSION')
-let version = await readFile(versionFilePath)
+const versionFilePath = resolve(__dirname, '../VERSION')
 
-async function hasUpdate() {
+/**
+ *
+ * @param {string} version
+ */
+async function hasUpdate(version) {
   // Fetch the version from google
-  const data = await ky
-    .get('https://fonts.googleapis.com/icon?family=Material+Icons')
-    .text()
-  const googleVersion = data.match(
-    /^https:\/\/fonts\.gstatic\.com\/s\/materialicons\/v([\d]+)/,
+  const { body: data } = await got(
+    'https://fonts.googleapis.com/icon?family=Material+Icons',
   )
+  const { version: googleVersion } = data.match(
+    /https:\/\/fonts\.gstatic\.com\/s\/materialicons\/v(?<version>[\d]+)/,
+  ).groups
 
   if (parseInt(googleVersion) > parseInt(version)) {
-    version = googleVersion
-    return true
+    return googleVersion
   }
 
   return false
@@ -55,7 +57,8 @@ async function hasUpdate() {
  * @return {Promise<Manifest>}
  */
 async function getManifest() {
-  return ky.get('https://material.io/tools/icons/static/data.json').json()
+  const { body } = await got('https://material.io/tools/icons/static/data.json')
+  return JSON.parse(body)
 }
 
 /**
@@ -86,11 +89,11 @@ function buildIconUrl(icon, theme) {
  * @type {Record<Theme, string>}
  */
 const themeNameMap = {
-  baseline: '', // filled
-  outline: '_outlined',
-  round: '_rounded',
-  twotone: '_two_tone',
-  sharp: '_sharp',
+  baseline: 'filled',
+  outline: 'outline',
+  round: 'round',
+  twotone: 'twotone',
+  sharp: 'sharp',
 }
 
 /**
@@ -100,24 +103,32 @@ const themeNameMap = {
  * @param {Theme} theme
  */
 async function downloadAndSave(category, icon, theme) {
-  console.log(`download icon: ${icon.id}`)
+  console.log(`download icon: ${icon.id}_${theme}`)
 
-  const url = buildIconUrl(theme, icon)
-  const size = endUrl.match(/^.*-([0-9]+)px.svg$/)[1]
-  const svg = await ky.get(url, { retry: 3 }).text()
+  const url = buildIconUrl(icon, theme)
+  const size = url.match(/^.*-([0-9]+)px.svg$/)[1]
+  const { body: svg } = await got(url)
   const dir = join(
     __dirname,
-    `./${category.name}/ic_${icon.id}${themeNameMap[theme]}_${size}px`,
+    `../icons/${themeNameMap[theme]}/${category.name}`,
   )
   await ensureDirectory(dir)
-  await writeFile(dir, svg)
+  await writeFile(join(dir, `ic_${icon.id}_${size}px.svg`), svg)
 }
 
 async function run() {
   try {
-    if (!(await hasUpdate())) return
+    const version = await readFile(versionFilePath, 'utf8')
+    const updatedVersion = await hasUpdate(version)
+
+    if (!updatedVersion) {
+      console.log('No update found')
+      return
+    }
+    console.log('New version found: ', updatedVersion)
 
     const manifest = await getManifest()
+    // manifest.categories = manifest.categories.splice(1, 1)
 
     // Download all Icons
     await Promise.all(
@@ -134,13 +145,13 @@ async function run() {
 
     await Promise.all([
       writeFile(
-        resolve(__dirname, './manifest.json'),
+        resolve(__dirname, '../manifest.json'),
         JSON.stringify(manifest),
       ),
-      writeFile(versionFilePath, version),
+      writeFile(versionFilePath, updatedVersion),
     ])
 
-    console.log(`Successfully updated to v${version}!`)
+    console.log(`Successfully updated to v${updatedVersion}!`)
   } catch (err) {
     console.error('UNEXPECTED ERROR:', err)
     throw err

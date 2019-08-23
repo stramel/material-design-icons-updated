@@ -1,6 +1,6 @@
 {
   "name": "material-design-icons-updated",
-  "version": "4.0",
+  "version": "4.0.0",
   "description": "Material Design icons by Google",
   "repository": {
     "type": "git",
@@ -37,6 +37,12 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node -r @babel/register ./scripts/download.js"
+    "start": "node -r @babel/register ./scripts/download.js",
+    "debug": "node -r @babel/register --inspect-brk ./scripts/download.js"
+  },
+  "dependencies": {
+    "async.queue": "^0.5.2",
+    "cli-progress": "^3.0.0",
+    "throttles": "^1.0.0"
   }
 }

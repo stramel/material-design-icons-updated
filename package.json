@@ -24,6 +24,8 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
+    "async.queue": "^0.5.2",
+    "cli-progress": "^3.0.0",
     "got": "^9.6.0"
   },
   "engines": {
@@ -40,9 +42,5 @@
     "start": "node -r @babel/register ./scripts/download.js",
     "debug": "node -r @babel/register --inspect-brk ./scripts/download.js"
   },
-  "dependencies": {
-    "async.queue": "^0.5.2",
-    "cli-progress": "^3.0.0",
-    "throttles": "^1.0.0"
-  }
+  "dependencies": {}
 }

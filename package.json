@@ -1,7 +1,8 @@
 {
   "name": "material-design-icons-updated",
-  "version": "4.8.1",
+  "version": "4.8.2",
   "description": "Material Design icons by Google",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/stramel/material-design-icons-updated"
@@ -34,7 +35,6 @@
     "semi": false,
     "singleQuote": true
   },
-  "type": "module",
   "scripts": {
     "start": "node -r @babel/register ./scripts/download.js",
     "debug": "node -r @babel/register --inspect-brk ./scripts/download.js"

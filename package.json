@@ -28,9 +28,6 @@
     "cli-progress": "^3.0.0",
     "got": "^9.6.0"
   },
-  "engines": {
-    "node": ">= 12.6.0"
-  },
   "prettier": {
     "trailingComma": "all",
     "tabWidth": 2,

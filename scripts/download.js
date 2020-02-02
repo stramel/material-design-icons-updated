@@ -19,12 +19,18 @@ async function hasUpdate(version) {
   // Fetch the version from google
   const { body: data } = await got(
     'https://fonts.googleapis.com/icon?family=Material+Icons',
+    {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
+      },
+    },
   )
   const { version: googleVersion, hash } = data.match(
     /https:\/\/fonts\.gstatic\.com\/s\/materialicons\/v(?<version>[\d]+)\/(?<hash>[A-Za-z0-9\-]+)\./,
   ).groups
 
-  const hashedVersion = `${googleVersion}-${hash}`
+  const hashedVersion = `${googleVersion}-${hash}`.trim()
   if (hashedVersion !== version) {
     return hashedVersion
   }
@@ -79,9 +85,7 @@ const themes = ['baseline', 'outline', 'round', 'sharp', 'twotone']
  * @param {Theme} theme
  */
 function buildIconUrl(icon, theme) {
-  return `https://fonts.gstatic.com/s/i/materialicons${theme}/${
-    icon.id
-  }/v1/24px.svg?download=true`
+  return `https://fonts.gstatic.com/s/i/materialicons${theme}/${icon.id}/v1/24px.svg?download=true`
 }
 
 /**
@@ -118,8 +122,9 @@ async function downloadAndSave(category, icon, theme) {
 async function run() {
   try {
     const version = await readFile(versionFilePath, 'utf8')
-    const updatedVersion = await hasUpdate(version)
-
+    console.log('Version:', version.trim())
+    const updatedVersion = await hasUpdate(version.trim())
+    console.log('Updated Version:', updatedVersion)
     if (!updatedVersion) {
       console.log('No update found')
       return

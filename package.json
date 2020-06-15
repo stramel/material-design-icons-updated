@@ -26,7 +26,9 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
     "async.queue": "^0.5.2",
+    "chalk": "^4.1.0",
     "cli-progress": "^3.0.0",
+    "cli-table3": "^0.6.0",
     "got": "^9.6.0"
   },
   "prettier": {

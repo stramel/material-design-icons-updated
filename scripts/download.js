@@ -34,11 +34,13 @@ const errorMap = new Map()
  * @return {Promise<Manifest>}
  */
 async function readOldManifest() {
-  if (!(await fs.access(manifestFilePath))) {
+  try {
+    await fs.access(manifestFilePath)
+    const oldManifest = await fs.readFile(manifestFilePath, 'utf-8')
+    return JSON.parse(oldManifest)
+  } catch (ex) {
     return {}
   }
-  const oldManifest = await fs.readFile(manifestFilePath, 'utf8')
-  return JSON.parse(oldManifest)
 }
 
 /**
@@ -287,7 +289,7 @@ async function run({ verbose }) {
     }
 
     if (diff.removed.length > 0) {
-      console.log(`Removing ${diff.removed.length} icons:`)
+      console.log(`\nRemoving ${diff.removed.length} icons:`)
       bar.start(diff.removed.length, 0)
 
       for (const icon of iconRemovalCombinations) {
@@ -297,11 +299,12 @@ async function run({ verbose }) {
       bar.stop()
     }
 
+    console.log('\nUpdating the manifest')
     await fs.writeFile(manifestFilePath, JSON.stringify(manifest, null, 2))
 
-    console.log('Successfully updated to the latest icons!')
+    console.log('\nSuccessfully updated to the latest icons!')
   } catch (err) {
-    console.error('UNEXPECTED ERROR:', err)
+    console.error('\n\nUNEXPECTED ERROR:', err)
     throw err
   }
 }

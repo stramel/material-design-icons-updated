@@ -5,7 +5,9 @@ import { promises as fs } from 'fs'
  * @param {string} dir
  */
 export async function ensureDirectory(dir) {
-  if (!(await fs.access(dir))) {
+  try {
+    await fs.access(dir)
+  } catch (ex) {
     await fs.mkdir(dir, { recursive: true })
   }
 }

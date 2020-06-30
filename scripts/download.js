@@ -71,13 +71,13 @@ const familyThemes = {
  * @param {Icon} icon
  * @param {string} family
  */
-function buildIconUrl(manifest, icon, family) {
+function buildIconUrl(manifest, icon, family, size) {
   const { asset_url_pattern: urlTemplate, host } = manifest
   const urlPath = urlTemplate
     .replace('{family}', family)
     .replace('{icon}', icon.name)
     .replace('{version}', icon.version)
-    .replace('{asset}', '24px.svg')
+    .replace('{asset}', `${size}px.svg`)
   return `https://${host}${urlPath}?download=true`
 }
 
@@ -87,11 +87,11 @@ function buildIconUrl(manifest, icon, family) {
  * @param {string} iconName
  * @param {string} iconUrl
  */
-async function downloadAndSave(category, theme, iconName, iconUrl) {
+async function downloadAndSave(category, theme, iconName, iconSize, iconUrl) {
   const { body: svg } = await got(iconUrl)
   const dir = resolve(iconsDir, `${theme}/${category}`)
   await ensureDirectory(dir)
-  await fs.writeFile(resolve(dir, `ic_${iconName}_24px.svg`), svg)
+  await fs.writeFile(resolve(dir, `ic_${iconName}_${iconSize}px.svg`), svg)
 }
 
 /**
@@ -99,9 +99,9 @@ async function downloadAndSave(category, theme, iconName, iconUrl) {
  * @param {Theme} theme
  * @param {string} iconName
  */
-async function removeIcon(category, theme, iconName) {
+async function removeIcon(category, theme, iconName, iconSize) {
   await fs.unlink(
-    resolve(iconsDir, `${theme}/${category}/ic_${iconName}_24px.svg`),
+    resolve(iconsDir, `${theme}/${category}/ic_${iconName}_${iconSize}px.svg`),
   )
 }
 
@@ -244,14 +244,16 @@ async function run({ verbose }) {
         return
       }
       icon.categories.forEach((category) => {
-        Object.entries(familyThemes).forEach(([family, theme]) => {
-          if (iconsToBeRemoved.includes(icon.name)) {
-            iconRemovalCombinations.push([category, theme, icon.name])
-            return
-          }
-          const iconUrl = buildIconUrl(manifest, icon, family)
-          iconCominations.push({
-            task: [category, theme, icon.name, iconUrl],
+        icon.sizes_px.forEach((size) => {
+          Object.entries(familyThemes).forEach(([family, theme]) => {
+            if (iconsToBeRemoved.includes(icon.name)) {
+              iconRemovalCombinations.push([category, theme, icon.name, size])
+              return
+            }
+            const iconUrl = buildIconUrl(manifest, icon, family, size)
+            iconCominations.push({
+              task: [category, theme, icon.name, size, iconUrl],
+            })
           })
         })
       })

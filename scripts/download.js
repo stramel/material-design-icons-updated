@@ -1,137 +1,162 @@
 const got = require('got')
-import { resolve, join } from 'path'
+import { resolve } from 'path'
 import queue from 'async.queue'
+import Table from 'cli-table3'
+import chalk from 'chalk'
 import progress from 'cli-progress'
-import { ensureDirectory, readFile, writeFile } from './fs.js'
+import { ensureDirectory, exists, readFile, writeFile } from './fs.js'
 
-// Pull in our current version
-const versionFilePath = resolve(__dirname, '../VERSION')
+const manifestFilePath = resolve(__dirname, '../manifest.json')
+const iconsDir = resolve(__dirname, '../icons')
 
 const bar = new progress.SingleBar({}, progress.Presets.shades_classic)
 
 const errorMap = new Map()
 
 /**
- *
- * @param {string} version
- */
-async function hasUpdate(version) {
-  // Fetch the version from google
-  const { body: data } = await got(
-    'https://fonts.googleapis.com/icon?family=Material+Icons',
-    {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
-      },
-    },
-  )
-  const { version: googleVersion, hash } = data.match(
-    /https:\/\/fonts\.gstatic\.com\/s\/materialicons\/v(?<version>[\d]+)\/(?<hash>[A-Za-z0-9\-]+)\./,
-  ).groups
-
-  const hashedVersion = `${googleVersion}-${hash}`.trim()
-  if (hashedVersion !== version) {
-    return hashedVersion
-  }
-
-  return false
-}
-
-/**
- * @typedef ImageUrls
- * @property {string} baseline
- * @property {string} outline
- * @property {string} round
- * @property {string} sharp
- * @property {string} twotone
- */
-/**
- * @typedef {keyof ImageUrls} Theme
- */
-/**
  * @typedef Icon
- * @property {string} id
- * @property {ImageUrls} [imageUrls]
- */
-/**
- * @typedef Category
  * @property {string} name
- * @property {Icon[]} icons
+ * @property {number} version
+ * @property {string[]} categories
+ * @property {string[]} tags
+ * @property {number[]} sizes_px
+ * @property {string[]} unsupported_families
  */
-
 /**
  * @typedef Manifest
- * @property {string} baseUrl
- * @property {Category[]} categories
+ * @property {string} host
+ * @property {string} asset_url_pattern
+ * @property {string[]} families
+ * @property {Icon[]} icons
  */
 
 /**
  * @return {Promise<Manifest>}
  */
-async function getManifest() {
-  const { body } = await got('https://material.io/tools/icons/static/data.json')
-  return JSON.parse(body)
+async function readOldManifest() {
+  if (!(await exists(manifestFilePath))) {
+    return {}
+  }
+  const oldManifest = await readFile(manifestFilePath, 'utf8')
+  return JSON.parse(oldManifest)
 }
 
 /**
- * @type {Theme[]}
+ * @return {Promise<Manifest>}
  */
-const themes = ['baseline', 'outline', 'round', 'sharp', 'twotone']
+async function fetchNewManifest() {
+  const { body } = await got('https://fonts.google.com/metadata/icons')
+  // for some reason, the response above includes incorrect leading chars
+  // need to remove these chars to be able to parse the JSON
+  const leadingErrantChars = ")]}'"
+  const cleaned = body.replace(leadingErrantChars, '')
+  return JSON.parse(cleaned)
+}
+
+/**
+ * @type {Record<string, string>}
+ */
+const familyThemes = {
+  materialicons: 'filled',
+  materialiconsoutlined: 'outline',
+  materialiconsround: 'round',
+  materialiconssharp: 'sharp',
+  materialiconstwotone: 'twotone',
+}
 
 /**
  *
+ * @param {Manifest} manifest
  * @param {Icon} icon
- * @param {Theme} theme
+ * @param {string} family
  */
-function buildIconUrl(icon, theme) {
-  return `https://fonts.gstatic.com/s/i/materialicons${theme}/${icon.id}/v1/24px.svg?download=true`
+function buildIconUrl(manifest, icon, family) {
+  const { asset_url_pattern: urlTemplate, host } = manifest
+  const urlPath = urlTemplate
+    .replace('{family}', family)
+    .replace('{icon}', icon.name)
+    .replace('{version}', icon.version)
+    .replace('{asset}', '24px.svg')
+  return `https://${host}${urlPath}?download=true`
 }
 
 /**
- * @type {Record<Theme, string>}
- */
-const themeNameMap = {
-  baseline: 'filled',
-  outline: 'outline',
-  round: 'round',
-  twotone: 'twotone',
-  sharp: 'sharp',
-}
-
-/**
- *
- * @param {Category} category
+ * @param {string} category
  * @param {Icon} icon
  * @param {Theme} theme
  */
-async function downloadAndSave(category, icon, theme) {
-  const url = buildIconUrl(
-    icon,
-    theme === 'baseline' ? '' : theme === 'outline' ? 'outlined' : theme,
-  )
-  const { body: svg } = await got(url)
-  const dir = join(
-    __dirname,
-    `../icons/${themeNameMap[theme]}/${category.name}`,
-  )
+async function downloadAndSave(category, theme, iconName, iconUrl) {
+  const { body: svg } = await got(iconUrl)
+  const dir = resolve(iconsDir, `${theme}/${category}`)
   await ensureDirectory(dir)
-  await writeFile(join(dir, `ic_${icon.id}_24px.svg`), svg)
+  await writeFile(resolve(dir, `ic_${iconName}_24px.svg`), svg)
+}
+
+/**
+ * @param {Manifest} manifest
+ * @return {Record<string, number>}
+ */
+function mapIconVersions(manifest) {
+  const icons = manifest.icons || []
+  return icons.reduce((result, icon) => {
+    result[icon.name] = icon.version
+    return result
+  }, {})
+}
+
+/**
+ * @param {Manifest} oldManifest
+ * @param {Manifest} newManifest
+ * @return {Table}
+ */
+function diffManifests(oldManifest, newManifest) {
+  const oldIconVersions = mapIconVersions(oldManifest)
+  const newIconVersions = mapIconVersions(newManifest)
+
+  const upgradedIconNames = Object.keys(newIconVersions).filter(
+    (newIconName) =>
+      !!oldIconVersions[newIconName] &&
+      oldIconVersions[newIconName] !== newIconVersions[newIconName],
+  )
+  const addedIconNames = Object.keys(newIconVersions).filter(
+    (newIconName) => !oldIconVersions[newIconName],
+  )
+  const deletedIconNames = Object.keys(oldIconVersions).filter(
+    (oldIconName) => !newIconVersions[oldIconName],
+  )
+
+  const table = new Table({ head: ['Icon', 'Status'] })
+  upgradedIconNames.forEach((name) => {
+    const oldVersion = oldIconVersions[name]
+    const newVersion = newIconVersions[name]
+    table.push([
+      name,
+      chalk.yellow(`Upgraded v${oldVersion} --> v${newVersion}`),
+    ])
+  })
+  addedIconNames.forEach((name) => {
+    table.push([name, chalk.green('Added new icon')])
+  })
+  deletedIconNames.forEach((name) => {
+    table.push([name, chalk.red('Deleted icon')])
+  })
+
+  return table
 }
 
 async function run() {
   try {
-    const version = await readFile(versionFilePath, 'utf8')
-    console.log('Version:', version.trim())
-    const updatedVersion = await hasUpdate(version.trim())
-    console.log('Updated Version:', updatedVersion)
-    if (!updatedVersion) {
+    const oldManifest = await readOldManifest()
+    const newManifest = await fetchNewManifest()
+
+    const diff = diffManifests(oldManifest, newManifest)
+    if (diff.length === 0) {
       console.log('No update found')
       return
     }
-    console.log(`New version found: v${updatedVersion.split('-')[0]}`)
+    console.log(diff.toString())
 
-    const manifest = await getManifest()
+    const manifest = await fetchNewManifest()
 
     const q = queue(async ({ task: iconCombo }, callback) => {
       try {
@@ -143,17 +168,20 @@ async function run() {
       callback()
     }, 5)
 
-    const p = new Promise(resolve => {
+    const p = new Promise((resolve) => {
       q.drain = resolve
     })
 
     const iconCominations = []
 
     // Generating all icon combinations
-    manifest.categories.forEach(category => {
-      category.icons.forEach(icon => {
-        themes.forEach(theme => {
-          iconCominations.push({ task: [category, icon, theme] })
+    manifest.icons.forEach((icon) => {
+      icon.categories.forEach((category) => {
+        Object.entries(familyThemes).forEach(([family, theme]) => {
+          const iconUrl = buildIconUrl(manifest, icon, family)
+          iconCominations.push({
+            task: [category, theme, icon.name, iconUrl],
+          })
         })
       })
     })
@@ -164,8 +192,8 @@ async function run() {
     bar.start(total, 0)
 
     // Download all Icons
-    iconCominations.forEach(task => {
-      q.push(task, err => {
+    iconCominations.forEach((task) => {
+      q.push(task, (err) => {
         if (err) {
           const tries = errorMap.get(task) || 0
           if (tries < 3) {
@@ -187,15 +215,9 @@ async function run() {
 
     bar.stop()
 
-    await Promise.all([
-      writeFile(
-        resolve(__dirname, '../manifest.json'),
-        JSON.stringify(manifest),
-      ),
-      writeFile(versionFilePath, updatedVersion),
-    ])
+    await writeFile(manifestFilePath, JSON.stringify(newManifest, null, 2))
 
-    console.log(`Successfully updated to v${updatedVersion.split('-')[0]}!`)
+    console.log('Successfully downloaded latest icons!')
   } catch (err) {
     console.error('UNEXPECTED ERROR:', err)
     throw err

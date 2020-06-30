@@ -1,18 +1,13 @@
-import * as fs from 'fs'
-import * as util from 'util'
-const { promisify } = util
-
-export const exists = promisify(fs.exists)
-export const mkdir = promisify(fs.mkdir)
-export const readFile = promisify(fs.readFile)
-export const writeFile = promisify(fs.writeFile)
+import { promises as fs } from 'fs'
 
 /**
  * Ensures that the specified directory exists
  * @param {string} dir
  */
 export async function ensureDirectory(dir) {
-  if (!(await exists(dir))) {
-    await mkdir(dir, { recursive: true })
+  if (!(await fs.access(dir))) {
+    await fs.mkdir(dir, { recursive: true })
   }
 }
+
+export default fs

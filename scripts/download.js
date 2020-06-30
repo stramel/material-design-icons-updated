@@ -1,10 +1,10 @@
-const got = require('got')
+import got from 'got'
 import { resolve } from 'path'
 import queue from 'async.queue'
 import Table from 'cli-table3'
 import chalk from 'chalk'
 import progress from 'cli-progress'
-import { ensureDirectory, exists, readFile, writeFile } from './fs.js'
+import fs, { ensureDirectory } from './fs.js'
 
 const manifestFilePath = resolve(__dirname, '../manifest.json')
 const iconsDir = resolve(__dirname, '../icons')
@@ -34,10 +34,10 @@ const errorMap = new Map()
  * @return {Promise<Manifest>}
  */
 async function readOldManifest() {
-  if (!(await exists(manifestFilePath))) {
+  if (!(await fs.access(manifestFilePath))) {
     return {}
   }
-  const oldManifest = await readFile(manifestFilePath, 'utf8')
+  const oldManifest = await fs.readFile(manifestFilePath, 'utf8')
   return JSON.parse(oldManifest)
 }
 
@@ -46,8 +46,7 @@ async function readOldManifest() {
  */
 async function fetchNewManifest() {
   const { body } = await got('https://fonts.google.com/metadata/icons')
-  // for some reason, the response above includes incorrect leading chars
-  // need to remove these chars to be able to parse the JSON
+  // Remove these chars to be able to parse the JSON
   const leadingErrantChars = ")]}'"
   const cleaned = body.replace(leadingErrantChars, '')
   return JSON.parse(cleaned)
@@ -82,14 +81,26 @@ function buildIconUrl(manifest, icon, family) {
 
 /**
  * @param {string} category
- * @param {Icon} icon
  * @param {Theme} theme
+ * @param {string} iconName
+ * @param {string} iconUrl
  */
 async function downloadAndSave(category, theme, iconName, iconUrl) {
   const { body: svg } = await got(iconUrl)
   const dir = resolve(iconsDir, `${theme}/${category}`)
   await ensureDirectory(dir)
-  await writeFile(resolve(dir, `ic_${iconName}_24px.svg`), svg)
+  await fs.writeFile(resolve(dir, `ic_${iconName}_24px.svg`), svg)
+}
+
+/**
+ * @param {string} category
+ * @param {Theme} theme
+ * @param {string} iconName
+ */
+async function removeIcon(category, theme, iconName) {
+  await fs.unlink(
+    resolve(iconsDir, `${theme}/${category}/ic_${iconName}_24px.svg`),
+  )
 }
 
 /**
@@ -105,58 +116,99 @@ function mapIconVersions(manifest) {
 }
 
 /**
+ * @typedef IconDiff
+ * @property {[string, number][]} added
+ * @property {[string, {version: number, oldVersion: number}][]} updated
+ * @property {[string, number][]} removed
+ */
+
+/**
  * @param {Manifest} oldManifest
  * @param {Manifest} newManifest
- * @return {Table}
+ * @return {IconDiff}
  */
 function diffManifests(oldManifest, newManifest) {
   const oldIconVersions = mapIconVersions(oldManifest)
   const newIconVersions = mapIconVersions(newManifest)
 
-  const upgradedIconNames = Object.keys(newIconVersions).filter(
-    (newIconName) =>
-      !!oldIconVersions[newIconName] &&
-      oldIconVersions[newIconName] !== newIconVersions[newIconName],
-  )
-  const addedIconNames = Object.keys(newIconVersions).filter(
-    (newIconName) => !oldIconVersions[newIconName],
-  )
-  const deletedIconNames = Object.keys(oldIconVersions).filter(
-    (oldIconName) => !newIconVersions[oldIconName],
+  const diffResult = Object.entries(newIconVersions).reduce(
+    (result, [name, version]) => {
+      const oldVersion = oldIconVersions[name]
+
+      if (!oldIconVersions[name]) {
+        // ADDED (Icon didn't previously exist)
+        result.added.push([name, version])
+      } else if (oldVersion !== version) {
+        // UPDATED (Icon previously existed but version is different)
+        result.updated.push([name, { version, oldVersion }])
+      }
+
+      return result
+    },
+    { added: [], updated: [] },
   )
 
-  const table = new Table({ head: ['Icon', 'Status'] })
-  upgradedIconNames.forEach((name) => {
-    const oldVersion = oldIconVersions[name]
-    const newVersion = newIconVersions[name]
-    table.push([
-      name,
-      chalk.yellow(`Upgraded v${oldVersion} --> v${newVersion}`),
-    ])
-  })
-  addedIconNames.forEach((name) => {
-    table.push([name, chalk.green('Added new icon')])
-  })
-  deletedIconNames.forEach((name) => {
-    table.push([name, chalk.red('Deleted icon')])
-  })
+  diffResult.removed = Object.entries(oldIconVersions).filter(
+    ([name]) => !newIconVersions[name],
+  )
 
-  return table
+  return diffResult
 }
 
-async function run() {
+/**
+ * @param {IconDiff} diff
+ */
+function printIconDiff({ added, updated, removed }) {
+  const table = new Table({ head: ['Icon', 'Status'], style: { head: [] } })
+
+  added.forEach(([name]) => {
+    table.push([name, chalk.green('Added')])
+  })
+
+  updated.forEach(([name, { version, oldVersion }]) => {
+    table.push([name, chalk.yellow(`Updated (v${oldVersion} --> v${version})`)])
+  })
+
+  removed.forEach(([name]) => {
+    table.push([name, chalk.red('Deleted')])
+  })
+
+  console.log(table.toString())
+}
+
+/**
+ * @param {IconDiff} diff
+ */
+function printIconDiffSummary({ added, updated, removed }) {
+  const table = new Table({ head: ['Status', 'Count'], style: { head: [] } })
+
+  table.push([chalk.green('Added'), added.length])
+  table.push([chalk.yellow('Updated'), updated.length])
+  table.push([chalk.red('Removed'), removed.length])
+
+  console.log(table.toString())
+}
+
+async function run({ verbose }) {
   try {
     const oldManifest = await readOldManifest()
-    const newManifest = await fetchNewManifest()
+    const manifest = await fetchNewManifest()
 
-    const diff = diffManifests(oldManifest, newManifest)
-    if (diff.length === 0) {
+    const diff = diffManifests(oldManifest, manifest)
+    if (
+      diff.added.length === 0 &&
+      diff.updated.length === 0 &&
+      diff.removed.length === 0
+    ) {
       console.log('No update found')
       return
     }
-    console.log(diff.toString())
 
-    const manifest = await fetchNewManifest()
+    if (verbose) {
+      printIconDiff(diff)
+    } else {
+      printIconDiffSummary(diff)
+    }
 
     const q = queue(async ({ task: iconCombo }, callback) => {
       try {
@@ -173,11 +225,28 @@ async function run() {
     })
 
     const iconCominations = []
+    const iconRemovalCombinations = []
+
+    const iconsToBeFetched = [
+      ...diff.added.map(([name]) => name),
+      ...diff.updated.map(([name]) => name),
+    ]
+    const iconsToBeRemoved = diff.removed.map(([name]) => name)
 
     // Generating all icon combinations
     manifest.icons.forEach((icon) => {
+      if (
+        !iconsToBeFetched.includes(icon.name) &&
+        !iconsToBeRemoved.includes(icon.name)
+      ) {
+        return
+      }
       icon.categories.forEach((category) => {
         Object.entries(familyThemes).forEach(([family, theme]) => {
+          if (iconsToBeRemoved.includes(icon.name)) {
+            iconRemovalCombinations.push([category, theme, icon.name])
+            return
+          }
           const iconUrl = buildIconUrl(manifest, icon, family)
           iconCominations.push({
             task: [category, theme, icon.name, iconUrl],
@@ -188,40 +257,55 @@ async function run() {
 
     let total = iconCominations.length
 
-    console.log(`Downloading ${total} icons:`)
-    bar.start(total, 0)
+    if (iconCominations.length > 0) {
+      console.log(`\nDownloading ${total} updated icons:`)
+      bar.start(total, 0)
 
-    // Download all Icons
-    iconCominations.forEach((task) => {
-      q.push(task, (err) => {
-        if (err) {
-          const tries = errorMap.get(task) || 0
-          if (tries < 3) {
-            q.push(task)
-            errorMap.set(task, tries + 1)
-            total += 1
-            bar.setTotal(total)
+      // Download all Icons
+      iconCominations.forEach((task) => {
+        q.push(task, (err) => {
+          if (err) {
+            const tries = errorMap.get(task) || 0
+            if (tries < 3) {
+              q.push(task)
+              errorMap.set(task, tries + 1)
+              total += 1
+              bar.setTotal(total)
+              return
+            }
+            console.error('Failed to download.')
+            exit(1)
             return
           }
-          console.error('Failed to download.')
-          exit(1)
-          return
-        }
-        bar.increment()
+          bar.increment()
+        })
       })
-    })
 
-    await p
+      await p
 
-    bar.stop()
+      bar.stop()
+    }
 
-    await writeFile(manifestFilePath, JSON.stringify(newManifest, null, 2))
+    if (diff.removed.length > 0) {
+      console.log(`Removing ${diff.removed.length} icons:`)
+      bar.start(diff.removed.length, 0)
 
-    console.log('Successfully downloaded latest icons!')
+      for (const icon of iconRemovalCombinations) {
+        await removeIcon(...icon)
+      }
+
+      bar.stop()
+    }
+
+    await fs.writeFile(manifestFilePath, JSON.stringify(manifest, null, 2))
+
+    console.log('Successfully updated to the latest icons!')
   } catch (err) {
     console.error('UNEXPECTED ERROR:', err)
     throw err
   }
 }
 
-run()
+run({
+  verbose: process.env.VERBOSE === 'true',
+})

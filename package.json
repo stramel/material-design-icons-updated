@@ -39,7 +39,7 @@
   },
   "scripts": {
     "start": "node -r @babel/register ./scripts/download.js",
-    "debug": "node -r @babel/register --inspect-brk ./scripts/download.js"
+    "debug": "VERBOSE=true node -r @babel/register --inspect-brk ./scripts/download.js"
   },
   "dependencies": {}
 }

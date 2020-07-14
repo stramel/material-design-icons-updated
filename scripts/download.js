@@ -9,6 +9,8 @@ import fs, { ensureDirectory } from './fs.js'
 const manifestFilePath = resolve(__dirname, '../manifest.json')
 const iconsDir = resolve(__dirname, '../icons')
 
+const verbose = process.env.VERBOSE === 'true'
+
 const bar = new progress.SingleBar({}, progress.Presets.shades_classic)
 
 const errorMap = new Map()
@@ -88,12 +90,16 @@ function buildIconUrl(manifest, icon, family, size) {
  * @param {string} iconUrl
  */
 async function downloadAndSave(category, theme, iconName, iconSize, iconUrl) {
-  console.log('Downloading...', iconUrl)
   const { body: svg } = await got(iconUrl)
   const dir = resolve(iconsDir, `${theme}/${category}`)
   await ensureDirectory(dir)
   const iconPath = resolve(dir, `ic_${iconName}_${iconSize}px.svg`)
-  console.log('Writing...', iconPath)
+  // if (verbose) {
+  //   try {
+  //     const existingFile = await fs.readFile(iconPath, 'utf-8')
+  // TODO: Diff files
+  //   } catch (ex) {}
+  // }
   await fs.writeFile(iconPath, svg)
 }
 
@@ -101,13 +107,13 @@ async function downloadAndSave(category, theme, iconName, iconSize, iconUrl) {
  * @param {string} category
  * @param {Theme} theme
  * @param {string} iconName
+ * @param {string} iconUrl
  */
 async function removeIcon(category, theme, iconName, iconSize) {
   const iconPath = resolve(
     iconsDir,
     `${theme}/${category}/ic_${iconName}_${iconSize}px.svg`,
   )
-  console.log('Removing...', iconPath)
   await fs.unlink(iconPath)
 }
 
@@ -197,6 +203,27 @@ function printIconDiffSummary({ added, updated, removed }) {
   console.log(table.toString())
 }
 
+function createIconCombinations(manifest, icons) {
+  const iconCominations = []
+
+  // Generating icon combinations
+  manifest.icons.forEach((icon) => {
+    if (!icons.includes(icon.name)) {
+      return
+    }
+    icon.categories.forEach((category) => {
+      icon.sizes_px.forEach((size) => {
+        Object.entries(familyThemes).forEach(([family, theme]) => {
+          const iconUrl = buildIconUrl(manifest, icon, family, size)
+          iconCominations.push([category, theme, icon.name, size, iconUrl])
+        })
+      })
+    })
+  })
+
+  return iconCominations
+}
+
 async function run({ verbose }) {
   try {
     const oldManifest = await readOldManifest()
@@ -232,38 +259,17 @@ async function run({ verbose }) {
       q.drain = resolve
     })
 
-    const iconCominations = []
-    const iconRemovalCombinations = []
-
-    const iconsToBeFetched = [
+    // Generating all icon combinations
+    const iconCominations = createIconCombinations(manifest, [
       ...diff.added.map(([name]) => name),
       ...diff.updated.map(([name]) => name),
-    ]
-    const iconsToBeRemoved = diff.removed.map(([name]) => name)
+    ]).map((combo) => ({ task: combo }))
 
-    // Generating all icon combinations
-    manifest.icons.forEach((icon) => {
-      if (
-        !iconsToBeFetched.includes(icon.name) &&
-        !iconsToBeRemoved.includes(icon.name)
-      ) {
-        return
-      }
-      icon.categories.forEach((category) => {
-        icon.sizes_px.forEach((size) => {
-          Object.entries(familyThemes).forEach(([family, theme]) => {
-            if (iconsToBeRemoved.includes(icon.name)) {
-              iconRemovalCombinations.push([category, theme, icon.name, size])
-              return
-            }
-            const iconUrl = buildIconUrl(manifest, icon, family, size)
-            iconCominations.push({
-              task: [category, theme, icon.name, size, iconUrl],
-            })
-          })
-        })
-      })
-    })
+    // Generating all icon removal combinations
+    const iconRemovalCombinations = createIconCombinations(
+      oldManifest,
+      diff.removed.map(([name]) => name),
+    )
 
     let total = iconCominations.length
 
@@ -284,8 +290,7 @@ async function run({ verbose }) {
               return
             }
             console.error('Failed to download.')
-            exit(1)
-            return
+            process.exit(1)
           }
           bar.increment()
         })
@@ -298,19 +303,22 @@ async function run({ verbose }) {
 
     if (diff.removed.length > 0) {
       console.log(`\nRemoving ${diff.removed.length} icons:`)
-      bar.start(diff.removed.length, 0)
+      bar.start(iconRemovalCombinations.length, 0)
 
       for (const icon of iconRemovalCombinations) {
         await removeIcon(...icon)
+        bar.increment()
       }
 
-      bar.stop()
+      bar.render()
+      bar.stop
     }
 
-    console.log('\nUpdating the manifest')
+    console.log('\n\nUpdating the manifest')
     await fs.writeFile(manifestFilePath, JSON.stringify(manifest, null, 2))
 
     console.log('\nSuccessfully updated to the latest icons!')
+    process.exit(0)
   } catch (err) {
     console.error('\n\nUNEXPECTED ERROR:', err)
     throw err
@@ -318,5 +326,5 @@ async function run({ verbose }) {
 }
 
 run({
-  verbose: process.env.VERBOSE === 'true',
+  verbose,
 })

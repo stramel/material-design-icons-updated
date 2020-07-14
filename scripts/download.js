@@ -88,10 +88,13 @@ function buildIconUrl(manifest, icon, family, size) {
  * @param {string} iconUrl
  */
 async function downloadAndSave(category, theme, iconName, iconSize, iconUrl) {
+  console.log('Downloading...', iconUrl)
   const { body: svg } = await got(iconUrl)
   const dir = resolve(iconsDir, `${theme}/${category}`)
   await ensureDirectory(dir)
-  await fs.writeFile(resolve(dir, `ic_${iconName}_${iconSize}px.svg`), svg)
+  const iconPath = resolve(dir, `ic_${iconName}_${iconSize}px.svg`)
+  console.log('Writing...', iconPath)
+  await fs.writeFile(iconPath, svg)
 }
 
 /**
@@ -100,9 +103,12 @@ async function downloadAndSave(category, theme, iconName, iconSize, iconUrl) {
  * @param {string} iconName
  */
 async function removeIcon(category, theme, iconName, iconSize) {
-  await fs.unlink(
-    resolve(iconsDir, `${theme}/${category}/ic_${iconName}_${iconSize}px.svg`),
+  const iconPath = resolve(
+    iconsDir,
+    `${theme}/${category}/ic_${iconName}_${iconSize}px.svg`,
   )
+  console.log('Removing...', iconPath)
+  await fs.unlink(iconPath)
 }
 
 /**

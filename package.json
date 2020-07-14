@@ -38,7 +38,7 @@
     "singleQuote": true
   },
   "scripts": {
-    "start": "node -r @babel/register ./scripts/download.js",
+    "start": "VERBOSE=true node -r @babel/register ./scripts/download.js",
     "debug": "VERBOSE=true node -r @babel/register --inspect-brk ./scripts/download.js"
   },
   "dependencies": {}

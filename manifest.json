@@ -102,7 +102,7 @@
     },
     {
       "name": "6_ft_apart",
-      "version": 1,
+      "version": 2,
       "unsupported_families": [],
       "categories": [
         "social"
@@ -2977,7 +2977,7 @@
     },
     {
       "name": "book_online",
-      "version": 1,
+      "version": 2,
       "unsupported_families": [],
       "categories": [
         "social"
@@ -4834,7 +4834,7 @@
     },
     {
       "name": "clean_hands",
-      "version": 1,
+      "version": 2,
       "unsupported_families": [],
       "categories": [
         "social"
@@ -6465,28 +6465,6 @@
         "monitor",
         "web",
         "windows"
-      ],
-      "sizes_px": [
-        24
-      ]
-    },
-    {
-      "name": "details",
-      "version": 6,
-      "unsupported_families": [],
-      "categories": [
-        "image"
-      ],
-      "tags": [
-        "details",
-        "edit",
-        "editing",
-        "enhance",
-        "image",
-        "photo",
-        "photography",
-        "sharpen",
-        "triangle"
       ],
       "sizes_px": [
         24
@@ -21959,7 +21937,7 @@
     },
     {
       "name": "shuffle",
-      "version": 7,
+      "version": 8,
       "unsupported_families": [],
       "categories": [
         "av"

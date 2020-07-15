@@ -190,7 +190,7 @@ function printIconDiff({ added, updated, removed }) {
   })
 
   updated.forEach(([name, { version, oldVersion }]) => {
-    table.push([name, chalk.yellow(`Updated (v${oldVersion} --> v${version})`)])
+    table.push([name, chalk.yellow(`Updated (v${oldVersion} -> v${version})`)])
   })
 
   removed.forEach(([name]) => {

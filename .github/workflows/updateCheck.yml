@@ -38,6 +38,5 @@ jobs:
           title: Icon Changes
           body: |
             # Icon Changes
-
-            ${{steps.check.outputs.changes}}
+            ${{steps.check_for_updates.outputs.changes}}
           branch: icon-updates

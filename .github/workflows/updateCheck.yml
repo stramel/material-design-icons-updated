@@ -27,18 +27,19 @@ jobs:
 
       - name: Check for Updates
         id: check_for_updates
-        run: echo "::set-output name=changes::$(npm start)"
+        run: echo ::set-output name=icon_changes::$(npm start --silent)echo "::set-output name=changes::$()"
         env:
           CI: true
 
       - name: Output
-        run: echo ${{ steps.check_for_updates.outputs.changes }}
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v2
-      #   with:
-      #     commit-message: 'chore(icons): Sync Icons'
-      #     title: Icon Changes
-      #     body: |
-      #       # Icon Changes
-      #       ${{steps.check_for_updates.outputs.changes}}
-      #     branch: icon-updates
+        run: echo ${{ steps.check_for_updates.outputs.icon_changes }} > a.out
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          commit-message: 'chore(icons): Sync Icons'
+          title: Icon Changes
+          body: |
+            # Icon Changes
+
+            ${{ steps.check_for_updates.outputs.icon_changes }}
+          branch: icon-updates

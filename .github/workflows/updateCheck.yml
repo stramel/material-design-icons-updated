@@ -26,7 +26,13 @@ jobs:
 
       - name: Check for Updates
         id: check_for_updates
-        run: echo ::set-output name=icon_changes::$(npm start --silent)
+        run: |
+          changes=$(npm start --silent)
+          changes="${changes//'%'/'%25'}"
+          changes="${changes//$'\n'/'%0A'}"
+          changes="${changes//$'\r'/'%0D'}"
+          echo $changes
+          echo "::set-output name=icon_changes::$changes"
         env:
           CI: true
 

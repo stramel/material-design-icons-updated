@@ -6,6 +6,7 @@ import chalk from 'chalk'
 import progress from 'cli-progress'
 import debug from 'debug'
 import { writableNoopStream } from 'noop-stream'
+import table from 'markdown-table'
 import fs, { ensureDirectory } from './fs.js'
 
 const log = debug('check:log')
@@ -200,6 +201,20 @@ function printIconDiff({ added, updated, removed }) {
   console.log(table.toString())
 }
 
+function printIconTable({ added, updated, removed }) {
+  console.log(
+    table([
+      ['Icon', 'Status'],
+      ...added.map(([name]) => [name, 'Added']),
+      ...updated.map(([name, { version, oldVersion }]) => [
+        name,
+        `Updated (v${oldVersion} -> v${version})`,
+      ]),
+      ...removed.map(([name]) => [name, 'Deleted']),
+    ]),
+  )
+}
+
 /**
  * @param {IconDiff} diff
  */
@@ -250,7 +265,11 @@ async function run({ verbose }) {
     }
 
     if (verbose) {
-      printIconDiff(diff)
+      if (debug.enabled('check:log')) {
+        printIconDiff(diff)
+      } else {
+        printIconTable(diff)
+      }
     } else {
       printIconDiffSummary(diff)
     }

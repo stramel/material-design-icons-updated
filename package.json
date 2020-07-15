@@ -25,6 +25,7 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
+    "@changesets/cli": "^2.9.2",
     "async.queue": "^0.5.2",
     "chalk": "^4.1.0",
     "cli-progress": "^3.0.0",

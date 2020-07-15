@@ -2,7 +2,8 @@ name: Update Check
 
 on:
   schedule:
-    - cron: '0 */1 * * *'
+    - cron: '*/5 * * * *'
+    # - cron: '0 */1 * * *' # Hourly
 
 jobs:
   check:

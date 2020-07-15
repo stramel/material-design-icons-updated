@@ -31,12 +31,14 @@ jobs:
         env:
           CI: true
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v2
-        with:
-          commit-message: 'chore(icons): Sync Icons'
-          title: Icon Changes
-          body: |
-            # Icon Changes
-            ${{steps.check_for_updates.outputs.changes}}
-          branch: icon-updates
+      - name: Output
+        run: echo ${{steps.check_for_updates.outputs.changes}}
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v2
+      #   with:
+      #     commit-message: 'chore(icons): Sync Icons'
+      #     title: Icon Changes
+      #     body: |
+      #       # Icon Changes
+      #       ${{steps.check_for_updates.outputs.changes}}
+      #     branch: icon-updates

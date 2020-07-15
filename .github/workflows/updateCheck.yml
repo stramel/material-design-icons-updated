@@ -27,12 +27,13 @@ jobs:
 
       - name: Check for Updates
         id: check_for_updates
-        run: echo ::set-output name=icon_changes::$(npm start --silent)echo "::set-output name=changes::$()"
+        run: echo ::set-output name=icon_changes::$(npm start --silent)
         env:
           CI: true
 
       - name: Output
         run: echo ${{ steps.check_for_updates.outputs.icon_changes }} > a.out
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2
         with:

@@ -29,7 +29,9 @@
     "chalk": "^4.1.0",
     "cli-progress": "^3.0.0",
     "cli-table3": "^0.6.0",
-    "got": "^11.3.0"
+    "debug": "^4.1.1",
+    "got": "^11.3.0",
+    "noop-stream": "^0.1.0"
   },
   "prettier": {
     "trailingComma": "all",
@@ -39,7 +41,7 @@
   },
   "scripts": {
     "start": "VERBOSE=true node -r @babel/register ./scripts/download.js",
-    "debug": "VERBOSE=true node -r @babel/register --inspect-brk ./scripts/download.js"
+    "debug": "DEBUG=check:* VERBOSE=true node -r @babel/register ./scripts/download.js"
   },
   "dependencies": {}
 }

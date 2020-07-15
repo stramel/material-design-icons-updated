@@ -4,14 +4,24 @@ import queue from 'async.queue'
 import Table from 'cli-table3'
 import chalk from 'chalk'
 import progress from 'cli-progress'
+import debug from 'debug'
+import { writableNoopStream } from 'noop-stream'
 import fs, { ensureDirectory } from './fs.js'
+
+const log = debug('check:log')
+const error = debug('check:error')
 
 const manifestFilePath = resolve(__dirname, '../manifest.json')
 const iconsDir = resolve(__dirname, '../icons')
 
 const verbose = process.env.VERBOSE === 'true'
 
-const bar = new progress.SingleBar({}, progress.Presets.shades_classic)
+const bar = new progress.SingleBar(
+  {
+    stream: debug.enabled('check:log') ? undefined : writableNoopStream(),
+  },
+  progress.Presets.shades_classic,
+)
 
 const errorMap = new Map()
 
@@ -235,7 +245,7 @@ async function run({ verbose }) {
       diff.updated.length === 0 &&
       diff.removed.length === 0
     ) {
-      console.log('No update found')
+      log('No update found')
       return
     }
 
@@ -274,7 +284,7 @@ async function run({ verbose }) {
     let total = iconCominations.length
 
     if (iconCominations.length > 0) {
-      console.log(`\nDownloading ${total} updated icons:`)
+      log(`\nDownloading ${total} updated icons:`)
       bar.start(total, 0)
 
       // Download all Icons
@@ -289,7 +299,7 @@ async function run({ verbose }) {
               bar.setTotal(total)
               return
             }
-            console.error('Failed to download.')
+            error('Failed to download.')
             process.exit(1)
           }
           bar.increment()
@@ -302,7 +312,7 @@ async function run({ verbose }) {
     }
 
     if (diff.removed.length > 0) {
-      console.log(`\nRemoving ${diff.removed.length} icons:`)
+      log(`\nRemoving ${diff.removed.length} icons:`)
       bar.start(iconRemovalCombinations.length, 0)
 
       for (const icon of iconRemovalCombinations) {
@@ -314,13 +324,13 @@ async function run({ verbose }) {
       bar.stop
     }
 
-    console.log('\n\nUpdating the manifest')
+    log('\n\nUpdating the manifest')
     await fs.writeFile(manifestFilePath, JSON.stringify(manifest, null, 2))
 
-    console.log('\nSuccessfully updated to the latest icons!')
+    log('\nSuccessfully updated to the latest icons!')
     process.exit(0)
   } catch (err) {
-    console.error('\n\nUNEXPECTED ERROR:', err)
+    error('\n\nUNEXPECTED ERROR:', err)
     throw err
   }
 }

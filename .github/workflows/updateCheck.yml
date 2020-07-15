@@ -1,0 +1,40 @@
+name: Update Check
+
+on:
+  schedule:
+    - cron: '0 */1 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+
+      - name: Setup Node.js 12.x
+        uses: actions/setup-node@master
+        with:
+          node-version: 12.x
+          check-latest: true
+
+      - name: Install Dependencies
+        run: npm install
+        env:
+          CI: true
+
+      - name: Check for Updates
+        id: check_for_updates
+        run: echo "##[set-output name=changes;]$(npm start)"
+        env:
+          CI: true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          commit-message: 'chore(icons): Sync Icons'
+          title: Icon Changes
+          body: |
+            # Icon Changes
+
+            ${{needs.job1.outputs.output1}}
+          branch: icon-updates

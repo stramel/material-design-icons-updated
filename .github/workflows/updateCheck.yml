@@ -1,9 +1,6 @@
 name: Update Check
 
 on:
-  push:
-    branches:
-      - master
   schedule:
     - cron: '0 */1 * * *' # Hourly
 
@@ -31,13 +28,10 @@ jobs:
           changes="${changes//'%'/'%25'}"
           changes="${changes//$'\n'/'%0A'}"
           changes="${changes//$'\r'/'%0D'}"
-          echo $changes
+          # echo $changes
           echo "::set-output name=icon_changes::$changes"
         env:
           CI: true
-
-      - name: Output
-        run: echo "${{ steps.check_for_updates.outputs.icon_changes }}" > a.out
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2

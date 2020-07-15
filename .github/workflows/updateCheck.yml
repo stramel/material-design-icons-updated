@@ -37,5 +37,5 @@ jobs:
           body: |
             # Icon Changes
 
-            ${{needs.job1.outputs.output1}}
+            ${{steps.check.outputs.changes}}
           branch: icon-updates

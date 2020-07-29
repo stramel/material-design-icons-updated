@@ -13373,18 +13373,6 @@
       ]
     },
     {
-      "name": "leave_bags_at_home",
-      "version": 1,
-      "unsupported_families": [],
-      "categories": [
-        "social"
-      ],
-      "tags": [],
-      "sizes_px": [
-        24
-      ]
-    },
-    {
       "name": "legend_toggle",
       "version": 3,
       "unsupported_families": [],

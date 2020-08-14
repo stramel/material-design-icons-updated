@@ -1,5 +1,5 @@
 ---
-"@fake-scope/fake-pkg": patch
+"material-design-icons-updated": major
 ---
 
 # Icon Changes

@@ -1,8 +1,13 @@
 name: Update Check
 
 on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "ignore"
+        required: false
   schedule:
-    - cron: '0 */1 * * *' # Hourly
+    - cron: "0 */1 * * *" # Hourly
 
 jobs:
   check:
@@ -36,7 +41,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2
         with:
-          commit-message: 'chore(icons): Sync Icons'
+          commit-message: "chore(icons): Sync Icons"
           title: Icon Changes
           body: |
             # Icon Changes

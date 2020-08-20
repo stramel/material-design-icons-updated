@@ -1325,6 +1325,78 @@
       ]
     },
     {
+      "name": "align_horizontal_center",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "align_horizontal_left",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "align_horizontal_right",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "align_vertical_bottom",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "align_vertical_center",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "align_vertical_top",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "all_inbox",
       "version": 5,
       "unsupported_families": [],
@@ -12014,6 +12086,18 @@
       ]
     },
     {
+      "name": "horizontal_distribute",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "horizontal_rule",
       "version": 8,
       "unsupported_families": [],
@@ -19547,6 +19631,18 @@
       ]
     },
     {
+      "name": "qr_code_2",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "communication"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "qr_code_scanner",
       "version": 2,
       "unsupported_families": [],
@@ -26249,6 +26345,18 @@
       ]
     },
     {
+      "name": "update_disabled",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "action"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "upgrade",
       "version": 7,
       "unsupported_families": [],
@@ -26400,6 +26508,18 @@
         "up",
         "writing"
       ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "vertical_distribute",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [],
       "sizes_px": [
         24
       ]

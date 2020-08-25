@@ -23,7 +23,7 @@
 
 ### Major Changes
 
-- 77572866a: # Icon Changes
+- 77572866a: Icon Changes
 
   | Icon                    | Status               |
   | ----------------------- | -------------------- |

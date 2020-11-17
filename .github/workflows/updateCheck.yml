@@ -4,20 +4,20 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: "ignore"
+        description: 'ignore'
         required: false
   schedule:
-    - cron: "0 */1 * * *" # Hourly
+    - cron: '0 */1 * * *' # Hourly
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
 
       - name: Setup Node.js 12.x
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v2
         with:
           node-version: 12.x
 
@@ -39,12 +39,14 @@ jobs:
           CI: true
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v2
+        uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: "chore(icons): Sync Icons"
+          commit-message: 'chore(icons): Sync Icons'
           title: Icon Changes
           body: |
             # Icon Changes
 
             ${{ steps.check_for_updates.outputs.icon_changes }}
           branch: icon-updates
+          assignees: |
+            stramel

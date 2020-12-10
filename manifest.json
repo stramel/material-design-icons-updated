@@ -708,6 +708,18 @@
       ]
     },
     {
+      "name": "add_reaction",
+      "version": 4,
+      "unsupported_families": [],
+      "categories": [
+        "social"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "add_road",
       "version": 5,
       "unsupported_families": [],
@@ -782,6 +794,33 @@
         "yes"
       ],
       "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "add_to_drive",
+      "version": 13,
+      "unsupported_families": [],
+      "categories": [
+        "action"
+      ],
+      "tags": [
+        "+",
+        "add",
+        "app",
+        "backup",
+        "cloud",
+        "drive",
+        "files",
+        "folders",
+        "gdrive",
+        "google",
+        "plus",
+        "storage",
+        "to"
+      ],
+      "sizes_px": [
+        20,
         24
       ]
     },
@@ -1933,6 +1972,19 @@
         "previous"
       ],
       "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "arrow_back_ios_new",
+      "version": 2,
+      "unsupported_families": [],
+      "categories": [
+        "navigation"
+      ],
+      "tags": [],
+      "sizes_px": [
+        20,
         24
       ]
     },
@@ -3401,6 +3453,32 @@
       ]
     },
     {
+      "name": "border_color",
+      "version": 7,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [
+        "border",
+        "color",
+        "doc",
+        "edit",
+        "editing",
+        "editor",
+        "sheet",
+        "spreadsheet",
+        "stroke",
+        "style",
+        "text",
+        "type",
+        "writing"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "border_horizontal",
       "version": 6,
       "unsupported_families": [],
@@ -4781,6 +4859,26 @@
       ]
     },
     {
+      "name": "cell_wifi",
+      "version": 6,
+      "unsupported_families": [],
+      "categories": [
+        "communication"
+      ],
+      "tags": [
+        "Wifi",
+        "cell",
+        "device",
+        "internet",
+        "network",
+        "phone",
+        "service"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "center_focus_strong",
       "version": 6,
       "unsupported_families": [],
@@ -4821,6 +4919,19 @@
         "zoom"
       ],
       "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "change_circle",
+      "version": 3,
+      "unsupported_families": [],
+      "categories": [
+        "content"
+      ],
+      "tags": [],
+      "sizes_px": [
+        20,
         24
       ]
     },
@@ -6139,6 +6250,18 @@
         "plus",
         "point"
       ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "copy_all",
+      "version": 2,
+      "unsupported_families": [],
+      "categories": [
+        "content"
+      ],
+      "tags": [],
       "sizes_px": [
         24
       ]
@@ -8205,6 +8328,27 @@
         "transportation",
         "vehicle",
         "vespa"
+      ],
+      "sizes_px": [
+        20,
+        24
+      ]
+    },
+    {
+      "name": "electric_rickshaw",
+      "version": 8,
+      "unsupported_families": [],
+      "categories": [
+        "maps"
+      ],
+      "tags": [
+        "automobile",
+        "car",
+        "cars",
+        "india",
+        "maps",
+        "transportation",
+        "vehicle"
       ],
       "sizes_px": [
         20,
@@ -10962,6 +11106,32 @@
       ]
     },
     {
+      "name": "format_color_fill",
+      "version": 7,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [
+        "color",
+        "doc",
+        "edit",
+        "editing",
+        "editor",
+        "fill",
+        "paint",
+        "sheet",
+        "spreadsheet",
+        "style",
+        "text",
+        "type",
+        "writing"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "format_color_reset",
       "version": 5,
       "unsupported_families": [],
@@ -10984,6 +11154,32 @@
         "reset",
         "sheet",
         "slash",
+        "spreadsheet",
+        "style",
+        "text",
+        "type",
+        "writing"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "format_color_text",
+      "version": 7,
+      "unsupported_families": [],
+      "categories": [
+        "editor"
+      ],
+      "tags": [
+        "color",
+        "doc",
+        "edit",
+        "editing",
+        "editor",
+        "fill",
+        "paint",
+        "sheet",
         "spreadsheet",
         "style",
         "text",
@@ -12410,6 +12606,18 @@
         "image",
         "medicine"
       ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "health_and_safety",
+      "version": 3,
+      "unsupported_families": [],
+      "categories": [
+        "social"
+      ],
+      "tags": [],
       "sizes_px": [
         24
       ]
@@ -17298,6 +17506,29 @@
       ]
     },
     {
+      "name": "network_cell",
+      "version": 8,
+      "unsupported_families": [],
+      "categories": [
+        "device"
+      ],
+      "tags": [
+        "cell",
+        "cellular",
+        "data",
+        "internet",
+        "mobile",
+        "network",
+        "phone",
+        "speed",
+        "wifi",
+        "wireless"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "network_check",
       "version": 6,
       "unsupported_families": [],
@@ -17347,6 +17578,29 @@
         "speed",
         "symbol",
         "warning",
+        "wifi",
+        "wireless"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "network_wifi",
+      "version": 8,
+      "unsupported_families": [],
+      "categories": [
+        "device"
+      ],
+      "tags": [
+        "cell",
+        "cellular",
+        "data",
+        "internet",
+        "mobile",
+        "network",
+        "phone",
+        "speed",
         "wifi",
         "wireless"
       ],
@@ -18383,6 +18637,18 @@
     {
       "name": "outbond",
       "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "action"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "outbound",
+      "version": 5,
       "unsupported_families": [],
       "categories": [
         "action"
@@ -20856,6 +21122,18 @@
       ]
     },
     {
+      "name": "production_quantity_limits",
+      "version": 3,
+      "unsupported_families": [],
+      "categories": [
+        "action"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "psychology",
       "version": 5,
       "unsupported_families": [],
@@ -22500,6 +22778,18 @@
       ]
     },
     {
+      "name": "safety_divider",
+      "version": 3,
+      "unsupported_families": [],
+      "categories": [
+        "social"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "sanitizer",
       "version": 1,
       "unsupported_families": [],
@@ -22574,6 +22864,19 @@
         "save"
       ],
       "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "savings",
+      "version": 1,
+      "unsupported_families": [],
+      "categories": [
+        "action"
+      ],
+      "tags": [],
+      "sizes_px": [
+        20,
         24
       ]
     },
@@ -23934,6 +24237,42 @@
       ]
     },
     {
+      "name": "signal_cellular_0_bar",
+      "version": 7,
+      "unsupported_families": [],
+      "categories": [
+        "device"
+      ],
+      "tags": [
+        "!",
+        "alert",
+        "attention",
+        "caution",
+        "cell",
+        "cellular",
+        "danger",
+        "data",
+        "error",
+        "exclamation",
+        "important",
+        "internet",
+        "mark",
+        "mobile",
+        "network",
+        "notification",
+        "phone",
+        "signal",
+        "speed",
+        "symbol",
+        "warning",
+        "wifi",
+        "wireless"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "signal_cellular_4_bar",
       "version": 6,
       "unsupported_families": [],
@@ -23986,6 +24325,42 @@
         "phone",
         "signal",
         "speed",
+        "wifi",
+        "wireless"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "signal_cellular_connected_no_internet_0_bar",
+      "version": 6,
+      "unsupported_families": [],
+      "categories": [
+        "device"
+      ],
+      "tags": [
+        "!",
+        "alert",
+        "attention",
+        "caution",
+        "cell",
+        "cellular",
+        "danger",
+        "data",
+        "error",
+        "exclamation",
+        "important",
+        "internet",
+        "mark",
+        "mobile",
+        "network",
+        "notification",
+        "phone",
+        "signal",
+        "speed",
+        "symbol",
+        "warning",
         "wifi",
         "wireless"
       ],
@@ -24105,6 +24480,30 @@
         "phone",
         "signal",
         "slash",
+        "speed",
+        "wifi",
+        "wireless"
+      ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "signal_wifi_0_bar",
+      "version": 7,
+      "unsupported_families": [],
+      "categories": [
+        "device"
+      ],
+      "tags": [
+        "cell",
+        "cellular",
+        "data",
+        "internet",
+        "mobile",
+        "network",
+        "phone",
+        "signal",
         "speed",
         "wifi",
         "wireless"
@@ -24533,6 +24932,18 @@
         "soap",
         "wash"
       ],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "social_distance",
+      "version": 3,
+      "unsupported_families": [],
+      "categories": [
+        "social"
+      ],
+      "tags": [],
       "sizes_px": [
         24
       ]
@@ -26805,6 +27216,18 @@
       ]
     },
     {
+      "name": "task_alt",
+      "version": 2,
+      "unsupported_families": [],
+      "categories": [
+        "action"
+      ],
+      "tags": [],
+      "sizes_px": [
+        24
+      ]
+    },
+    {
       "name": "terrain",
       "version": 6,
       "unsupported_families": [],
@@ -27823,6 +28246,19 @@
         "words"
       ],
       "sizes_px": [
+        24
+      ]
+    },
+    {
+      "name": "travel_explore",
+      "version": 3,
+      "unsupported_families": [],
+      "categories": [
+        "social"
+      ],
+      "tags": [],
+      "sizes_px": [
+        20,
         24
       ]
     },

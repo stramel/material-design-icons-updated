@@ -1,5 +1,15 @@
 # material-design-icons-updated
 
+## 6.1.1
+
+### Patch Changes
+
+- d1e584507: Icon Changes
+
+  | Icon       | Status              |
+  | ---------- | ------------------- |
+  | table_rows | Updated (v7 -> v11) |
+
 ## 6.1.0
 
 ### Minor Changes

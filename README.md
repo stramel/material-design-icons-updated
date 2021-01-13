@@ -2,15 +2,6 @@
 
 Material design icons is the official [icon set](https://www.google.com/design/spec/style/icons.html#icons-system-icons) from Google.  The icons are designed under the [material design guidelines](https://material.io/guidelines/).
 
-### 3.0.1 Update
-
-* Changed license in package.json.
-* Added missing device symbol sprites.
-
-### 3.0.0 Update
-
-License change to Apache 2.0!
-
 ## Getting Started
 
 Read the [developer guide](https://google.github.io/material-design-icons/) on how to use the material design icons in your project.
@@ -29,10 +20,6 @@ Read more in the [font portion](https://google.github.io/material-design-icons/#
 ### Using symbols and sprites
 
 The `css-sprite` and `svg-sprite` folders contain pre-generated sprite sheets, as well as svg symbols that can be `<use>`d more directly and with fewer constraints. Instructions for using them are in the [sprites documentation](https://github.com/google/material-design-icons/tree/master/sprites).
-
-## Polymer icons
-
-If you wish to use the icon set with Polymer, we recommend consuming them via the [`<iron-icons>`](https://github.com/polymerelements/iron-icons) element ([`<core-icons>`](https://github.com/Polymer/core-icons) in v0.5).
 
 ## License
 

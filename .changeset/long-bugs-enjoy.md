@@ -1,5 +1,5 @@
 ---
-"material-design-icons-updated": patch
+"material-design-icons-updated": minor
 ---
 
 Icon Changes

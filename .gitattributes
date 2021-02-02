@@ -1,2 +1,4 @@
 # Don't show diffs for generated files in github.
 icons/** linguist-generated=true
+manifest.json linguist-generated=true
+CHANGELOG.md linguist-generated=true

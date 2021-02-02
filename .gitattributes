@@ -1,0 +1,2 @@
+# Don't show diffs for generated files in github.
+icons/** linguist-generated=true

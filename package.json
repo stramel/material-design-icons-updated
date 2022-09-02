@@ -31,7 +31,7 @@
     "cli-progress": "^3.0.0",
     "cli-table3": "^0.6.0",
     "debug": "^4.1.1",
-    "got": "^11.3.0",
+    "got": "^12.4.0",
     "markdown-table": "^3.0.0",
     "noop-stream": "^0.1.0"
   },

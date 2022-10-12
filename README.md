@@ -1,3 +1,9 @@
+# DEPRECATED
+
+The original goal of this repository was to maintain the SVG icons for Material Design after their decision to move away from SVGs to an Icon Font. However, since then they have started regularly updating their SVG icons again. This eliminates the need for this repository.
+
+Use `@material-design-icons/svg` instead now. (https://github.com/google/material-design-icons)
+
 # Material design icons
 
 Material design icons is the official [icon set](https://www.google.com/design/spec/style/icons.html#icons-system-icons) from Google.  The icons are designed under the [material design guidelines](https://material.io/guidelines/).
